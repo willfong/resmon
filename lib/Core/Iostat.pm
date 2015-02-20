@@ -141,6 +141,14 @@ The average queue length of the requests that were issued to the device.
 
 The average time (in milliseconds) for I/O requests issued to the device to be served.
 
+=item r_await_msec
+
+The average time (in milliseconds) for read requests issued to the device to be served.
+
+=item w_await_msec
+
+The average time (in milliseconds) for write requests issued to the device to be served.
+
 =item svctm_msec
 
 The average service time (in milliseconds) for I/O requests that were issued to the device.
@@ -210,18 +218,35 @@ sub handler {
         my $output = run_command("$iostat_path -x $interval $count");
         foreach (split(/\n/, $output)) {
             next if (/^Device\:.*/);
-            next unless (/^(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+).*/);
-            $metrics{"${1}_rrqm_sec"} = [$2, 'n'];
-            $metrics{"${1}_wrqm_sec"} = [$3, 'n'];
-            $metrics{"${1}_reads_sec"} = [$4, 'n'];
-            $metrics{"${1}_writes_sec"} = [$5, 'n'];
-            $metrics{"${1}_rsec_sec"} = [$6, 'n'];
-            $metrics{"${1}_wsec_sec"} = [$7, 'n'];
-            $metrics{"${1}_avgrq_size"} = [$8, 'n'];
-            $metrics{"${1}_avgqu_size"} = [$9, 'n'];
-            $metrics{"${1}_await_msec"} = [$10, 'n'];
-            $metrics{"${1}_svctm_msec"} = [$11, 'n'];
-            $metrics{"${1}_util_pct"} = [$12, 'n'];
+            if (/^(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+).*/) {
+                $metrics{"${1}_rrqm_sec"} = [$2, 'n'];
+                $metrics{"${1}_wrqm_sec"} = [$3, 'n'];
+                $metrics{"${1}_reads_sec"} = [$4, 'n'];
+                $metrics{"${1}_writes_sec"} = [$5, 'n'];
+                $metrics{"${1}_kb_read_sec"} = [$6, 'n'];
+                $metrics{"${1}_kb_write_sec"} = [$7, 'n'];
+                $metrics{"${1}_avgrq_size"} = [$8, 'n'];
+                $metrics{"${1}_avgqu_size"} = [$9, 'n'];
+                $metrics{"${1}_await_msec"} = [$10, 'n'];
+                $metrics{"${1}_r_await_msec"} = [$11, 'n'];
+                $metrics{"${1}_w_await_msec"} = [$12, 'n'];
+                $metrics{"${1}_svctm_msec"} = [$13, 'n'];
+                $metrics{"${1}_util_pct"} = [$14, 'n'];
+            } elsif (/^(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+).*/) {
+                $metrics{"${1}_rrqm_sec"} = [$2, 'n'];
+                $metrics{"${1}_wrqm_sec"} = [$3, 'n'];
+                $metrics{"${1}_reads_sec"} = [$4, 'n'];
+                $metrics{"${1}_writes_sec"} = [$5, 'n'];
+                $metrics{"${1}_rsec_sec"} = [$6, 'n'];
+                $metrics{"${1}_wsec_sec"} = [$7, 'n'];
+                $metrics{"${1}_avgrq_size"} = [$8, 'n'];
+                $metrics{"${1}_avgqu_size"} = [$9, 'n'];
+                $metrics{"${1}_await_msec"} = [$10, 'n'];
+                $metrics{"${1}_svctm_msec"} = [$11, 'n'];
+                $metrics{"${1}_util_pct"} = [$12, 'n'];
+            } else {
+                next;
+            }
         }
         if (keys %metrics) {
             return \%metrics;
