@@ -71,13 +71,15 @@ sub handler {
     if ($osname eq 'solaris') {
         @values = (split(/\s+/, $output))[-3..-1];
     } elsif ($osname eq 'linux') {
-        if ( scalar split(/\s+/, $output) == 16 ){
+        my @o = split(/\s+/, $output);
+        my $output_num = @o;
+        if ($output_num == 16) {
             @values = (split(/\s+/, $output))[-4..-2];
-        } elsif( scalar split(/\s+/, $output) == 17 ) {
+        } elsif($output_num == 17) {
             @values = (split(/\s+/, $output))[-5..-3];
+        } else {
+            die "Unknown vmstat output";
         }
-
-        
     } elsif ($osname eq 'openbsd') {
         @values = (split(/\s+/, $output))[-3..-1];
     } elsif ($osname eq 'freebsd') {
