@@ -71,7 +71,13 @@ sub handler {
     if ($osname eq 'solaris') {
         @values = (split(/\s+/, $output))[-3..-1];
     } elsif ($osname eq 'linux') {
-        @values = (split(/\s+/, $output))[-5..-3];
+        if ( scalar split(/\s+/, $output) == 16 ){
+            @values = (split(/\s+/, $output))[-4..-2];
+        } elsif( scalar split(/\s+/, $output) == 17 ) {
+            @values = (split(/\s+/, $output))[-5..-3];
+        }
+
+        
     } elsif ($osname eq 'openbsd') {
         @values = (split(/\s+/, $output))[-3..-1];
     } elsif ($osname eq 'freebsd') {
