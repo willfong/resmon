@@ -92,6 +92,7 @@ sub handler {
     for my $key (keys %metrics) {
         $metrics{$key} = [$metrics{$key}, 'I'];
     }
+    $metrics{usage} = [100 - $metrics{idle}[0], 'I'];
 
     return \%metrics;
 };

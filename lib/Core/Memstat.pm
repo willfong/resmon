@@ -139,8 +139,8 @@ sub handler {
             ($metrics{MemFree}[0] + $metrics{Buffers}[0] +
                 $metrics{Cached}[0]), "L"];
         $metrics{MemUsagePct} = [
-            printf("%.2f", ($metrics{MemTotal}[0] - $metrics{MemFree}[0] - 
-                $metrics{Buffers}[0] - $metrics{Cached}[0]) / $metrics{MemTotal}[0]), "L"];
+            sprintf("%.4f", ($metrics{MemTotal}[0] - $metrics{MemFree}[0] - 
+                $metrics{Buffers}[0] - $metrics{Cached}[0]) / $metrics{MemTotal}[0])*100, "L"];
         return \%metrics;
     } elsif ($osname eq 'freebsd') {
         my %metrics;
