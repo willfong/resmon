@@ -138,6 +138,9 @@ sub handler {
         $metrics{MemFreeBufCache} = [
             ($metrics{MemFree}[0] + $metrics{Buffers}[0] +
                 $metrics{Cached}[0]), "L"];
+        $metrics{MemUsagePct} = [
+            printf("%.2f", ($metrics{MemTotal}[0] - $metrics{MemFree}[0] - 
+                $metrics{Buffers}[0] - $metrics{Cached}[0]) / $metrics{MemTotal}[0]), "L"];
         return \%metrics;
     } elsif ($osname eq 'freebsd') {
         my %metrics;
