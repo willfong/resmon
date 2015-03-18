@@ -70,14 +70,17 @@ sub handler {
     my $pass = $config->{'pass'};
     my $dbh = DBI->connect("DBI:mysql::$target;port=$port", $user, $pass);
 
-    my $select_query = "SHOW /*!50002 GLOBAL */ STATUS LIKE 'com_%'";
+    my $select_query = "SHOW /*!50002 GLOBAL */ STATUS";
     my $sth = $dbh->prepare($select_query);
     $sth->execute();
 
-    my %metrics;
+    my %tmpmetrics;
     while (my $result = $sth->fetchrow_hashref) {
-        $metrics{$result->{'Variable_name'}} = $result->{'Value'};
+        $tmpmetrics{$result->{'Variable_name'}} = $result->{'Value'};
     }
+    my %metrics;
+    $metrics{WriteQueries} = 0 + $tmpmetrics{Com_delete} + $tmpmetrics{Com_insert} + $tmpmetrics{Com_update};
+    $metrics{ReadQueries} = 0 + $tmpmetrics{Com_select};
 
     my $slave_query = "SHOW SLAVE STATUS";
     my $s_sth = $dbh->prepare($slave_query);
