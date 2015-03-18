@@ -128,6 +128,7 @@ sub handler {
         }
     } elsif ($osname eq 'linux') {
         my %metrics;
+        my %ret_metrics;
         open(MEMINFO, '/proc/meminfo') || die "Unable to read proc: $!\n";
         while (<MEMINFO>) {
             /(\w+)\:\s+(\d+).*/;
@@ -138,10 +139,10 @@ sub handler {
         $metrics{MemFreeBufCache} = [
             ($metrics{MemFree}[0] + $metrics{Buffers}[0] +
                 $metrics{Cached}[0]), "L"];
-        $metrics{MemUsagePct} = [
+        $ret_metrics{MemUsagePct} = [
             sprintf("%.4f", ($metrics{MemTotal}[0] - $metrics{MemFree}[0] - 
                 $metrics{Buffers}[0] - $metrics{Cached}[0]) / $metrics{MemTotal}[0])*100, "L"];
-        return \%metrics;
+        return \%ret_metrics;
     } elsif ($osname eq 'freebsd') {
         my %metrics;
         open(SYSCTL, 'sysctl hw.physmem vm.stats.vm |') || die "Unable to read sysctl: $!\n";

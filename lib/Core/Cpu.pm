@@ -63,6 +63,7 @@ sub handler {
     my $output = run_command("$vmstat_path 1 2 | $tail_path -1");
     my $osname = $^O;
     my %metrics;
+    my %ret_metrics;
     my @keys = qw( user system idle );
     my @values;
 
@@ -92,9 +93,9 @@ sub handler {
     for my $key (keys %metrics) {
         $metrics{$key} = [$metrics{$key}, 'I'];
     }
-    $metrics{usage} = [100 - $metrics{idle}[0], 'I'];
-
-    return \%metrics;
+    
+    $ret_metrics{usage} = [100 - $metrics{idle}[0], 'I'];
+    return \%ret_metrics;
 };
 
 1;
