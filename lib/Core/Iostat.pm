@@ -216,6 +216,7 @@ sub handler {
         my $interval = 5;
         my $count = 2;
         my $output = run_command("$iostat_path -x $interval $count");
+        my %ret_metrics;
         foreach (split(/\n/, $output)) {
             next if (/^Device\:.*/);
             if (/^(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+).*/) {
@@ -224,7 +225,9 @@ sub handler {
                 $metrics{"${1}_reads_sec"} = [$4, 'n'];
                 $metrics{"${1}_writes_sec"} = [$5, 'n'];
                 $metrics{"${1}_kb_read_sec"} = [$6, 'n'];
+                $ret_metrics{"${1}_kb_read_sec"} = [$6, 'n'];
                 $metrics{"${1}_kb_write_sec"} = [$7, 'n'];
+                $ret_metrics{"${1}_kb_write_sec"} = [$7, 'n'];
                 $metrics{"${1}_avgrq_size"} = [$8, 'n'];
                 $metrics{"${1}_avgqu_size"} = [$9, 'n'];
                 $metrics{"${1}_await_msec"} = [$10, 'n'];
@@ -248,8 +251,8 @@ sub handler {
                 next;
             }
         }
-        if (keys %metrics) {
-            return \%metrics;
+        if (keys %ret_metrics) {
+            return \%ret_metrics;
         } else {
             die "No disks found\n";
         }
