@@ -81,6 +81,7 @@ sub handler {
     my %metrics;
     $metrics{WriteQueries} = 0 + $tmpmetrics{Com_delete} + $tmpmetrics{Com_insert} + $tmpmetrics{Com_update};
     $metrics{ReadQueries} = 0 + $tmpmetrics{Com_select};
+    $metrics{Connections} = $tmpmetrics{Connections};
 
     my $slave_query = "SHOW SLAVE STATUS";
     my $s_sth = $dbh->prepare($slave_query);
